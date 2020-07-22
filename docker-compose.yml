@@ -1,0 +1,40 @@
+
+version: '3'
+
+services:
+    db:
+        image: mariadb:10.3.9
+        volumes:
+            - ./db:/var/lib/mysql
+        environment:
+            - MYSQL_ROOT_PASSWORD=password_root
+            - MYSQL_DATABASE=wordpress
+            - MYSQL_USER=usuario
+            - MYSQL_PASSWORD=mi_pass
+
+
+    web:
+        image: wordpress
+        depends_on:
+            - db
+        volumes:
+            - ./wp:/var/www/html
+        environment:
+            - WORDPRESS_DB_USER=admin
+            - WORDPRESS_DB_PASSWORD=mi_pass
+            - WORDPRESS_DB_HOST=db
+        ports:
+            - 80:80
+
+
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin:4.9
+        depends_on:
+            - db
+        environment:
+            PMA_HOST: db
+            PMA_PORT: 3306
+        ports:
+            - 8080:80
+        volumes:
+            - ./sessions:/sessions
